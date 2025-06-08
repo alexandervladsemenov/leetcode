@@ -124,8 +124,8 @@ void remove_element_from_multimap(std::multimap<T, U> &map_, T key, U value) {
 
 template<typename Comparison = std::less<int> >
 struct Heap {
-    std::vector<int> data;
-    std::multimap<int, int> val_index;
+    std::vector<int> data{};
+    std::multimap<int, int> val_index{};
     Comparison comparison;
 
     Heap() = default;
@@ -219,11 +219,23 @@ struct Heap {
             heapify_down(index, add_val);
     }
 
-    int top() {
+    int top() const {
         return data[0];
     }
     void pop() {
         remove(top());
+    }
+    void push(int val) {
+        add(val);
+    }
+    int size() const {
+        return data.size();
+    }
+
+
+    bool find(int val) const {
+        if (val_index.find(val) == val_index.end()) return false;
+        else return true;
     }
 };
 
