@@ -109,14 +109,28 @@ struct ListNode {
     }
 };
 
+template<typename T, typename U>
+void remove_element_from_multimap(std::multimap<T, U> &map_, T key, U value) {
+    auto iterpair = map_.equal_range(key);
+    auto it = iterpair.first;
+    for (; it != iterpair.second; ++it) {
+        if (it->second == value) {
+            map_.erase(it);
+            break;
+        }
+    }
+}
 
-struct maxHeap {
+
+template<typename Comparison = std::less<int> >
+struct Heap {
     std::vector<int> data;
-    std::unordered_map<int, int> val_index;
+    std::multimap<int, int> val_index;
+    Comparison comparison;
 
-    maxHeap() = default;
+    Heap() = default;
 
-    explicit maxHeap(const std::vector<int> &data_arr) {
+    explicit Heap(const std::vector<int> &data_arr) {
         for (const auto &elem: data_arr) {
             add(elem);
         }
@@ -126,9 +140,11 @@ struct maxHeap {
         if (index == 0)
             return;
         int parent = (index - 1) / 2;
-        if (data[parent] < val) {
-            val_index[val] = parent;
-            val_index[data[parent]] = index;
+        if (comparison(data[parent], val)) {
+            remove_element_from_multimap(val_index, data[parent], parent);
+            remove_element_from_multimap(val_index, val, index);
+            val_index.insert({val, parent});
+            val_index.insert({data[parent], index});
             std::swap(data[parent], data[index]);
             heapify_up(parent, val);
         }
@@ -141,21 +157,29 @@ struct maxHeap {
         int right_child = 2 * index + 2;
         if (left_child < data.size()) {
             int left_val = data[left_child];
-            int max_val = std::max(left_val, val);
+
+            int max_val = left_val;
+            if (comparison(left_val, val))
+                max_val = val;;
             if (right_child < data.size()) {
-                max_val = std::max(data[right_child], val);
+                if (comparison(max_val, data[right_child]))
+                    max_val = data[right_child];;
             }
             if (max_val == val) return;
             if (max_val == left_val) {
                 // swap left and parent
-                val_index[val] = left_child;
-                val_index[left_val] = index;
+                remove_element_from_multimap(val_index, left_val, left_child);
+                remove_element_from_multimap(val_index, val, index);
+                val_index.insert({val, left_child});
+                val_index.insert({left_val, index});
                 std::swap(data[left_child], data[index]);
                 heapify_down(left_child, val);
             } else {
                 // it's the right child
-                val_index[val] = right_child;
-                val_index[data[right_child]] = index;
+                remove_element_from_multimap(val_index, data[right_child], right_child);
+                remove_element_from_multimap(val_index, val, index);
+                val_index.insert({val, right_child});
+                val_index.insert({data[right_child], index});
                 std::swap(data[right_child], data[index]);
                 heapify_down(right_child, val);
             }
@@ -166,29 +190,30 @@ struct maxHeap {
 
     void add(int val) {
         data.push_back(val);
-        val_index[val] = data.size() - 1;
+        val_index.insert({val, int(data.size() - 1)});
         heapify_up(data.size() - 1, val);
     }
 
     void remove(int val) {
-        int index = val_index[val];
+        auto index = val_index.find(val)->second;
         data[index] = data[data.size() - 1];
         data.pop_back();
-        val_index[val] = index;
+        remove_element_from_multimap(val_index, val, index);
         //
         int parent = (index - 1) / 2;
-        if (data[parent] < val)
+        if (comparison(data[parent], val))
             heapify_up(index, val);
         else
             heapify_down(index, val);
     }
 
     void add_remove(int add_val, int remove_val) {
-        int index = val_index[remove_val];
+        int index = val_index.find(remove_val)->second;
         data[index] = add_val;
-        val_index[add_val] = index;
+        remove_element_from_multimap(val_index, remove_val, index);
+        val_index.insert({add_val, index});
         int parent = (index - 1) / 2;
-        if (data[parent] < add_val)
+        if (comparison(data[parent], add_val))
             heapify_up(index, add_val);
         else
             heapify_down(index, add_val);
@@ -197,6 +222,10 @@ struct maxHeap {
     int top() {
         return data[0];
     }
+    void pop() {
+        remove(top());
+    }
 };
+
 
 #endif
