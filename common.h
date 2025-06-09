@@ -196,9 +196,14 @@ struct Heap {
 
     void remove(int val) {
         auto index = val_index.find(val)->second;
+
         data[index] = data[data.size() - 1];
         data.pop_back();
         remove_element_from_multimap(val_index, val, index);
+        if (!data.empty()) {
+            remove_element_from_multimap(val_index, data[index], (int) data.size());
+            val_index.insert({data[index], index});
+        }
         //
         int parent = (index - 1) / 2;
         if (comparison(data[parent], val))
@@ -222,12 +227,15 @@ struct Heap {
     int top() const {
         return data[0];
     }
+
     void pop() {
         remove(top());
     }
+
     void push(int val) {
         add(val);
     }
+
     int size() const {
         return data.size();
     }
