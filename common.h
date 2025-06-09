@@ -206,10 +206,10 @@ struct Heap {
         }
         //
         int parent = (index - 1) / 2;
-        if (comparison(data[parent], val))
-            heapify_up(index, val);
+        if ( index > 0 && comparison(data[parent], data[index]))
+            heapify_up(index, data[index]);
         else
-            heapify_down(index, val);
+            heapify_down(index, data[index]);
     }
 
     void add_remove(int add_val, int remove_val) {
