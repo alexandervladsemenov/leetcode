@@ -85,8 +85,8 @@ public:
     }
 
     double findMedian() {
-        int size_min = pq_max.size();
-        int size_max = pq_min.size();
+        int size_max = pq_max.size();
+        int size_min = pq_min.size();
         if (size_max == size_min) {
             return (pq_max.top() + pq_min.top()) / 2.0;
         } else if (size_max > size_min)
@@ -114,9 +114,9 @@ double find_meadian_brute_force(int *arr, int start, int end) {
 
 int main() {
     std::vector<int> test_data = {
-        2, 3, 4, -1, 2, 4, -10, -4, 2, 4, 5, 6, 7, 8, 9, 1, -20, -14, -21, -19, 5, 6, 7, 14, 12, -9, -1, -2
+        1,3,-1,-3,5,3,6,7
     };
-    int k = 4;
+    int k = 3;
     int start = 0, end = k - 1;
     Median median(test_data,k);
     for ( int i = 0; i < test_data.size() - k; i++ ) {
