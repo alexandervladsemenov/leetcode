@@ -47,13 +47,23 @@ public:
     }
 
     void removeNum(int remove_number) {
-        if (pq_max.find(remove_number)) {
+        bool remove_max = false;
+        bool remove_min = false;
+        remove_max = pq_max.find(remove_number);
+        remove_min = pq_min.find(remove_number);
+        if (remove_max && remove_min) {
+            remove_max = remove_max & (pq_max.size() > pq_min.size());
+            remove_min = remove_min & (pq_max.size() < pq_min.size());
+        }
+
+
+        if (remove_max) {
             pq_max.remove(remove_number);
             int top_min = pq_min.top();
             pq_min.pop();
             addNum(top_min);
         }
-        if (pq_min.find(remove_number)) {
+        if (remove_min) {
             pq_min.remove(remove_number);
             int top_max = pq_max.top();
             pq_max.pop();
