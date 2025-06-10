@@ -12,7 +12,6 @@
 #include <array>
 #include <cstdint>
 #include <optional>
-#include <bits/locale_facets_nonio.h>
 
 using namespace std;
 template<typename, typename = void>
@@ -200,10 +199,11 @@ struct Heap {
         data[index] = data[data.size() - 1];
         data.pop_back();
         remove_element_from_multimap(val_index, val, index);
-        if (!data.empty()) {
+        if (index < data.size()) {
             remove_element_from_multimap(val_index, data[index], (int) data.size());
             val_index.insert({data[index], index});
         }
+
         //
         int parent = (index - 1) / 2;
         if ( index > 0 && comparison(data[parent], data[index]))

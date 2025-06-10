@@ -8,7 +8,7 @@ int gcd(int k, int m) {
     return gcd(res, k);
 }
 
-std::unordered_map<std::pair<std::pair<int, int>, std::pair<int, int>>,
+std::map<std::pair<std::pair<int, int>, std::pair<int, int>>,
                    std::pair<int, int>>
     counts;
 

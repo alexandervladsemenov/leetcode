@@ -52,22 +52,26 @@ public:
         remove_max = pq_max.find(remove_number);
         remove_min = pq_min.find(remove_number);
         if (remove_max && remove_min) {
-            remove_max = remove_max & (pq_max.size() > pq_min.size());
+            remove_max = remove_max & (pq_max.size() >= pq_min.size());
             remove_min = remove_min & (pq_max.size() < pq_min.size());
         }
 
 
         if (remove_max) {
             pq_max.remove(remove_number);
-            int top_min = pq_min.top();
-            pq_min.pop();
-            addNum(top_min);
+            if (pq_min.size() > 0) {
+                int top_min = pq_min.top();
+                pq_min.pop();
+                addNum(top_min);
+            }
         }
         if (remove_min) {
             pq_min.remove(remove_number);
-            int top_max = pq_max.top();
-            pq_max.pop();
-            addNum(top_max);
+            if (pq_max.size() > 0) {
+                int top_max = pq_max.top();
+                pq_max.pop();
+                addNum(top_max);
+            }
         }
     }
 
@@ -114,7 +118,7 @@ double find_meadian_brute_force(int *arr, int start, int end) {
 
 int main() {
     std::vector<int> test_data = {
-        1,3,-1,-3,5,3,6,7
+        1,2,3,4,2,3,1,4,2
     };
     int k = 3;
     int start = 0, end = k - 1;
@@ -127,5 +131,7 @@ int main() {
         start++;
         end++;
     }
-    return 0;
+
+
+   return 0;
 }
