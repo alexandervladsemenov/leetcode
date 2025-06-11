@@ -117,16 +117,25 @@ double find_meadian_brute_force(int *arr, int start, int end) {
 }
 
 int main() {
-    std::vector<int> test_data = {
-        1,2,3,4,2,3,1,4,2
-    };
-    int k = 3;
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_int_distribution<std::mt19937::result_type> dist6(-100,100); // distribution in range [1, 6]
+
+    std::vector<int> test_data ;
+    const size_t test_data_size = 10000;
+    for (size_t i = 0 ; i <  test_data_size ; i++) {
+        test_data.push_back( dist6(rng));
+    }
+
+
+    int k = 12;
     int start = 0, end = k - 1;
     Median median(test_data,k);
     for ( int i = 0; i < test_data.size() - k; i++ ) {
         double median_brute_force = find_meadian_brute_force(test_data.data(), start, end);
         double median_optimized = median.findMedian();
-        std::cout << median_brute_force << " vs " << median_optimized << std::endl;
+        if (median_brute_force -  median_optimized !=0 )
+            std::cout << median_brute_force << std::endl;
         median.add_remove(test_data[end+1], test_data[start]);
         start++;
         end++;
