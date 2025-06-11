@@ -17,11 +17,17 @@ bool isMatch(char *s, char *p, size_t s_start, size_t p_start) {
         char p_char = p[p_count];
         char p_next_char = p[p_count + 1];
         if (p_next_char == '*') {
-            answer |= isMatch(s + s_count, p + p_count + 2, s_count, p_count + 2);
+            if (dp[s_start + s_count][p_start + p_count + 2].has_value())
+                answer |= dp[s_start + s_count][p_start + p_count + 2].value();
+            else
+                answer |= isMatch(s + s_count, p + p_count + 2, s_count, p_count + 2);
             while (s[s_count] != '\0') {
                 if (compare(s[s_count], p_char)) {
                     s_count++;
-                    answer |= isMatch(s + s_count, p + p_count + 2, s_count, p_count + 2);
+                    if (dp[s_start + s_count][p_start + p_count + 2].has_value())
+                        answer |= dp[s_start + s_count][p_start + p_count + 2].value();
+                    else
+                        answer |= isMatch(s + s_count, p + p_count + 2, s_count, p_count + 2);
                 } else {
                     break;
                 }
@@ -29,22 +35,31 @@ bool isMatch(char *s, char *p, size_t s_start, size_t p_start) {
             return answer;;
         } else {
             bool flag = compare(s_char, p_char);
-            if (!flag)
+            if (!flag) {
+                dp[s_start][p_start] = false;
                 return false;
+            }
             s_count++;
             p_count++;
         }
     }
-    if (s[s_count] != '\0')
+    if (s[s_count] != '\0') {
+        dp[s_start][p_start] = false;
         return false;
+    }
     if (p[p_count] != '\0') {
         char p_next_char = p[p_count + 1];
         if (p_next_char == '*') {
-            answer |= isMatch(s + s_count, p + p_count + 2, s_count, p_count + 2);
-        } else
+            if (dp[s_start + s_count][p_start + p_count + 2].has_value())
+                answer |= dp[s_start + s_count][p_start + p_count + 2].value();
+            else
+                answer |= isMatch(s + s_count, p + p_count + 2, s_count, p_count + 2);
+        } else {
+            dp[s_start][p_start] = false;
             return false;
+        };
     }
-
+    dp[s_start][p_start] = answer | compare(s[s_count], p[p_count]);
     return answer | compare(s[s_count], p[p_count]);
 }
 
@@ -58,7 +73,7 @@ bool isMatch(string s, string p) {
 }
 
 int main() {
-    std::string s = "b", p = "b.*c";
+    std::string s = "b", p = "b.*c*";
     std::cout << isMatch(s, p);
     return 0;
 }
