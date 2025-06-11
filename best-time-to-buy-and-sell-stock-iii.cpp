@@ -15,7 +15,7 @@ int maxProfit(vector<int>& prices) {
     }
     max_profit = 0;
     current_price = prices[prices.size() - 1];
-    for (size_t i = prices.size() - 1; i >= 0; i--) {
+    for (int i = prices.size() - 1; i >= 0; i--) {
         if (prices[i] - current_price < 0) {
             max_profit = std::max(max_profit, current_price - prices[i]);
         } else {

@@ -16,4 +16,6 @@ bool containsNearbyDuplicate(vector<int> &nums, int k) {
 }
 
 int main() {
+    std::vector<int> nums = {3,3,5,0,0,3,1,4};
+    std::cout << containsNearbyDuplicate(nums, 3) << std::endl;
 }
